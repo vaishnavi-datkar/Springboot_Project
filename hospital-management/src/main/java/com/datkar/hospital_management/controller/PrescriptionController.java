@@ -1,0 +1,46 @@
+package com.datkar.hospital_management.controller;
+
+
+import com.datkar.hospital_management.model.Prescription;
+import com.datkar.hospital_management.service.PrescriptionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/prescription")
+public class PrescriptionController {
+
+    @Autowired
+    private PrescriptionService prescriptionService;
+
+
+
+    @GetMapping
+    public List<Prescription> getAllPrescriptions() {
+        return prescriptionService.getAllPrescriptions();
+    }
+
+    @GetMapping("/{id}")
+    public Prescription getPrescriptionById(@PathVariable int id) {
+
+        return prescriptionService.getPrescriptionById(id);
+    }
+    @PostMapping
+    public Prescription addPrescription(@RequestBody Prescription prescription) {
+        return prescriptionService.savePrescription(prescription);
+    }
+
+    @PutMapping("/{id}")
+    public Prescription updatePrescription(@RequestBody Prescription prescription) {
+        return prescriptionService.savePrescription(prescription);
+    }
+
+    @DeleteMapping("/{id}")
+    public String deletePrescription(@PathVariable int id) {
+        prescriptionService.deletePrescription(id);
+        return "Deleted";
+    }
+
+}
