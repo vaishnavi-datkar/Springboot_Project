@@ -1,0 +1,62 @@
+<div class="form-container">
+  <nav class="navbar">
+    <h1>{{ isEditMode ? 'Edit Appointment' : 'New Appointment' }}</h1>
+    <button class="btn-back" (click)="cancel()">Back to List</button>
+  </nav>
+
+  <div class="form-content">
+    <div class="form-card">
+      <h2>{{ isEditMode ? 'Update Appointment' : 'Schedule New Appointment' }}</h2>
+
+      <div class="error" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <form (ngSubmit)="saveAppointment()">
+        <div class="form-group">
+          <label>Patient *</label>
+          <select [(ngModel)]="appointment.patientId" name="patientId" required>
+            <option value="0">Select Patient</option>
+            <option *ngFor="let patient of patients" [value]="patient.patientId">
+              {{ patient.patientName }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Doctor *</label>
+          <select [(ngModel)]="appointment.doctorId" name="doctorId" required>
+            <option value="0">Select Doctor</option>
+            <option *ngFor="let doctor of doctors" [value]="doctor.doctorId">
+              {{ doctor.doctorName }} - {{ doctor.specialization }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Appointment Date & Time *</label>
+          <input 
+            type="datetime-local" 
+            [(ngModel)]="appointment.appointmentDate" 
+            name="appointmentDate"
+            required>
+        </div>
+
+        <div class="form-group">
+          <label>Status *</label>
+          <select [(ngModel)]="appointment.status" name="status" required>
+            <option value="SCHEDULED">Scheduled</option>
+            <option value="CONFIRMED">Confirmed</option>
+            <option value="COMPLETED">Completed</option>
+            <option value="CANCELLED">Cancelled</option>
+          </select>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" (click)="cancel()">Cancel</button>
+          <button type="submit" class="btn-save">{{ isEditMode ? 'Update' : 'Schedule' }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

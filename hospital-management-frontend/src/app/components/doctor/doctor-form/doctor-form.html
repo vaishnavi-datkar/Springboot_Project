@@ -1,0 +1,57 @@
+<div class="form-container">
+  <nav class="navbar">
+    <h1>{{ isEditMode ? 'Edit Doctor' : 'Add Doctor' }}</h1>
+    <button class="btn-back" (click)="cancel()">Back to List</button>
+  </nav>
+
+  <div class="form-content">
+    <div class="form-card">
+      <h2>{{ isEditMode ? 'Update Doctor Information' : 'New Doctor Information' }}</h2>
+
+      <div class="error" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </div>
+
+      <form (ngSubmit)="saveDoctor()">
+        <div class="form-group">
+          <label>Doctor Name *</label>
+          <input 
+            type="text" 
+            [(ngModel)]="doctor.doctorName" 
+            name="doctorName"
+            required
+            placeholder="Enter doctor name">
+        </div>
+
+        <div class="form-group">
+          <label>Specialization *</label>
+          <select [(ngModel)]="doctor.specialization" name="specialization" required>
+            <option value="">Select Specialization</option>
+            <option value="Cardiology">Cardiology</option>
+            <option value="Neurology">Neurology</option>
+            <option value="Orthopedics">Orthopedics</option>
+            <option value="Pediatrics">Pediatrics</option>
+            <option value="Dermatology">Dermatology</option>
+            <option value="General Medicine">General Medicine</option>
+            <option value="Surgery">Surgery</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Email *</label>
+          <input 
+            type="email" 
+            [(ngModel)]="doctor.email" 
+            name="email"
+            required
+            placeholder="Enter email address">
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-cancel" (click)="cancel()">Cancel</button>
+          <button type="submit" class="btn-save">{{ isEditMode ? 'Update' : 'Save' }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

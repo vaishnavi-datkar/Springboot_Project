@@ -1,0 +1,52 @@
+<!-- <p>patient-list works!</p> -->
+<div class="patient-list-container">
+  <nav class="navbar">
+    <h1>Patients Management</h1>
+    <button class="btn-back" (click)="goToDashboard()">Back to Dashboard</button>
+  </nav>
+
+  <div class="content">
+    <div class="header">
+      <h2>All Patients</h2>
+      <button class="btn-add" (click)="openAddModal()">+ Add Patient</button>
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Gender</th>
+            <th>Blood Group</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let patient of patients">
+            <td>{{ patient.patientId }}</td>
+            <td>{{ patient.patientName }}</td>
+            <td>{{ patient.age }}</td>
+            <td>{{ patient.gender }}</td>
+            <td>{{ patient.bloodGroup }}</td>
+            <td>{{ patient.email }}</td>
+            <td>{{ patient.phone }}</td>
+            <td>
+              <button class="btn-edit" (click)="openEditModal(patient)">Edit</button>
+              <button class="btn-delete" (click)="deletePatient(patient.patientId!)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+      <button [disabled]="currentPage === 0" (click)="previousPage()">Previous</button>
+      <span>Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+      <button [disabled]="currentPage === totalPages - 1" (click)="nextPage()">Next</button>
+    </div>
+  </div>
+</div>
