@@ -1,0 +1,42 @@
+<!-- <p>prescription-list works!</p> -->
+<div class="prescription-list-container">
+  <nav class="navbar">
+    <h1>Prescriptions Management</h1>
+    <button class="btn-back" (click)="goToDashboard()">Back to Dashboard</button>
+  </nav>
+
+  <div class="content">
+    <div class="header">
+      <h2>All Prescriptions</h2>
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Patient Name</th>
+            <th>Doctor Name</th>
+            <th>Medicine</th>
+            <th>Diagnosis</th>
+            <th>Notes</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let prescription of prescriptions">
+            <td>{{ prescription.id }}</td>
+            <td>{{ prescription.pName }}</td>
+            <td>{{ prescription.dName }}</td>
+            <td>{{ prescription.medicine }}</td>
+            <td>{{ prescription.diagnosis }}</td>
+            <td>{{ prescription.notes }}</td>
+            <td>
+              <button class="btn-delete" (click)="deletePrescription(prescription.id!)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -27,16 +27,30 @@ export class PatientList implements OnInit {
   }
 
   loadPatients(): void {
-    this.patientService.getAllPatients(this.currentPage, this.pageSize).subscribe({
-      next: (response) => {
-        this.patients = response.content || response;
+  this.patientService.getAllPatients(this.currentPage, this.pageSize).subscribe({
+    next: (response) => {
+      console.log('Patient response:', response);
+      
+      // Handle different response formats
+      if (Array.isArray(response)) {
+        this.patients = response;
+        this.totalPages = 1;
+      } else if (response && response.content) {
+        this.patients = response.content;
         this.totalPages = response.totalPages || 0;
-      },
-       error: (error) => {
-        console.error('Error loading patients', error);
+      } else {
+        this.patients = [];
+        this.totalPages = 0;
       }
-    });
-  }
+      
+      console.log('Patients loaded:', this.patients);
+    },
+    error: (error) => {
+      console.error('Error loading patients', error);
+      alert('Failed to load patients: ' + (error.error?.message || error.message));
+    }
+  });
+}
 
   openAddModal(): void {
     this.router.navigate(['/patients/new']);

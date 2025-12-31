@@ -8,6 +8,7 @@ import { appointmentService } from '../../../services/appointment';
 import { PatientService } from '../../../services/patient';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http'; // ADD THIS
 
 @Component({
   selector: 'app-appointment-form',
@@ -33,6 +34,7 @@ export class AppointmentForm implements OnInit {
     private appointmentService: appointmentService,
     private doctorService: DoctorService,
     private patientService: PatientService,
+    private http: HttpClient, // ADD THIS
     private router: Router,
     private route: ActivatedRoute
   ) {}
@@ -51,28 +53,42 @@ export class AppointmentForm implements OnInit {
   }
 
   loadDoctors(): void {
-  this.doctorService.getAllDoctorsSimple().subscribe({
-    next: (doctors) => {
-      this.doctors = doctors;
-      console.log('Doctors loaded:', this.doctors);
-    },
-    error: (error) => {
-      console.error('Error loading doctors', error);
-    }
-  });
-}
+    this.http.get<any>('http://localhost:8091/api/doctors?page=0&size=1000').subscribe({
+      next: (response: any) => {
+        if (Array.isArray(response)) {
+          this.doctors = response;
+        } else if (response && response.content) {
+          this.doctors = response.content;
+        } else {
+          this.doctors = [];
+        }
+        console.log('Doctors loaded:', this.doctors);
+      },
+      error: (error: any) => {
+        console.error('Error loading doctors', error);
+        this.errorMessage = 'Failed to load doctors';
+      }
+    });
+  }
 
-loadPatients(): void {
-  this.patientService.getAllPatientsSimple().subscribe({
-    next: (patients) => {
-      this.patients = patients;
-      console.log('Patients loaded:', this.patients);
-    },
-    error: (error) => {
-      console.error('Error loading patients', error);
-    }
-  });
-}
+  loadPatients(): void {
+    this.http.get<any>('http://localhost:8091/api/patients?page=0&size=1000').subscribe({
+      next: (response: any) => {
+        if (Array.isArray(response)) {
+          this.patients = response;
+        } else if (response && response.content) {
+          this.patients = response.content;
+        } else {
+          this.patients = [];
+        }
+        console.log('Patients loaded:', this.patients);
+      },
+      error: (error: any) => {
+        console.error('Error loading patients', error);
+        this.errorMessage = 'Failed to load patients';
+      }
+    });
+  }
 
   loadAppointment(id: number): void {
     this.appointmentService.getAppointmentById(id).subscribe({
@@ -93,24 +109,42 @@ loadPatients(): void {
   }
 
   saveAppointment(): void {
+    // Validate before saving
+    if (!this.appointment.patientId || this.appointment.patientId === 0) {
+      this.errorMessage = 'Please select a patient';
+      return;
+    }
+    
+    if (!this.appointment.doctorId || this.appointment.doctorId === 0) {
+      this.errorMessage = 'Please select a doctor';
+      return;
+    }
+    
+    if (!this.appointment.appointmentDate) {
+      this.errorMessage = 'Please select appointment date';
+      return;
+    }
+    
+    console.log('Saving appointment:', this.appointment);
+    
     if (this.isEditMode && this.appointmentId) {
-      this.appointmentService.updateAppointment(this.appointmentId, this.appointment).subscribe({
+      this.http.put(`http://localhost:8091/api/appo/${this.appointmentId}`, this.appointment).subscribe({
         next: () => {
           this.router.navigate(['/appointments']);
         },
-        error: (error) => {
+        error: (error: any) => {
           console.error('Error updating appointment', error);
-          this.errorMessage = 'Failed to update appointment';
+          this.errorMessage = 'Failed to update appointment: ' + (error.error?.message || error.message);
         }
       });
     } else {
-      this.appointmentService.createAppointment(this.appointment).subscribe({
+      this.http.post('http://localhost:8091/api/appo', this.appointment).subscribe({
         next: () => {
           this.router.navigate(['/appointments']);
         },
-        error: (error) => {
+        error: (error: any) => {
           console.error('Error creating appointment', error);
-          this.errorMessage = 'Failed to create appointment';
+          this.errorMessage = 'Failed to create appointment: ' + (error.error?.message || error.message);
         }
       });
     }
@@ -120,6 +154,3 @@ loadPatients(): void {
     this.router.navigate(['/appointments']);
   }
 }
-
-
-

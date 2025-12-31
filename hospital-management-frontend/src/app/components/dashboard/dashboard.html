@@ -2,7 +2,7 @@
   <nav class="navbar">
     <h1>Hospital Management System</h1>
     <div class="user-info">
-      <span class="username">Welcome, {{ username }}</span>
+      <span class="username">Welcome, {{ username }} ({{ userRole }})</span>
       <button class="btn-logout" (click)="logout()">Logout</button>
     </div>
   </nav>
@@ -14,24 +14,24 @@
     </div>
     
     <div class="cards-container">
-      <div class="card" (click)="navigateTo('/doctors')">
+      <div class="card" (click)="navigateTo('/doctors')" *ngIf="canAccessDoctors()">
         <h3>Doctors</h3>
         <p>Manage doctor records</p>
       </div>
 
-      <div class="card" (click)="navigateTo('/patients')">
+      <div class="card" (click)="navigateTo('/patients')" *ngIf="canAccessPatients()">
         <h3>Patients</h3>
         <p>Manage patient records</p>
       </div>
 
-      <div class="card" (click)="navigateTo('/appointments')">
+      <div class="card" (click)="navigateTo('/appointments')" *ngIf="canAccessAppointments()">
         <h3>Appointments</h3>
         <p>Manage appointments</p>
       </div>
 
-      <div class="card" (click)="navigateTo('/prescriptions')">
+      <div class="card" (click)="navigateTo('/prescriptions')" *ngIf="canAccessPatients()">
         <h3>Prescriptions</h3>
-        <p>Manage prescriptions</p>
+        <p>View prescriptions</p>
       </div>
     </div>
   </div>

@@ -53,30 +53,35 @@ export class PatientForm implements OnInit {
     });
   }
 
-  savePatient(): void {
-    if (this.isEditMode && this.patientId) {
-      this.patientService.updatePatient(this.patientId, this.patient).subscribe({
-        next: () => {
-          this.router.navigate(['/patients']);
-        },
-        error: (error) => {
-          console.error('Error updating patient', error);
-          this.errorMessage = 'Failed to update patient';
-        }
-      });
-      } else {
-      this.patientService.createPatient(this.patient).subscribe({
-        next: () => {
-          this.router.navigate(['/patients']);
-        },
-        error: (error) => {
-          console.error('Error creating patient', error);
-          this.errorMessage = 'Failed to create patient';
-        }
-      });
-    }
+ savePatient(): void {
+  // Remove role field before sending
+  const patientData = { ...this.patient };
+  delete patientData.role;
+  
+  console.log('Saving patient:', patientData);
+  
+  if (this.isEditMode && this.patientId) {
+    this.patientService.updatePatient(this.patientId, patientData).subscribe({
+      next: () => {
+        this.router.navigate(['/patients']);
+      },
+      error: (error) => {
+        console.error('Error updating patient', error);
+        this.errorMessage = 'Failed to update patient: ' + (error.error?.message || error.message);
+      }
+    });
+  } else {
+    this.patientService.createPatient(patientData).subscribe({
+      next: () => {
+        this.router.navigate(['/patients']);
+      },
+      error: (error) => {
+        console.error('Error creating patient', error);
+        this.errorMessage = 'Failed to create patient: ' + (error.error?.message || error.message);
+      }
+    });
   }
-
+}
   cancel(): void {
     this.router.navigate(['/patients']);
   }

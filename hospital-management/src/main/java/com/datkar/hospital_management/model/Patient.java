@@ -12,34 +12,29 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Patient {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long patientId;
 
     @NotBlank(message = "Patient name is required")
-    @Size(min = 2, max = 100)
     private String patientName;
 
-    @NotBlank(message = "Age required")
-    @Min(value = 0, message = "Age must be positive")
-    @Max(value = 150, message = "Age must be realistic")
+    @NotNull(message = "Age is required")
+    @Min(1)
     private Integer age;
 
-    @NotBlank(message = "email required")
-    @Email(message = "email must be valid")
+    @NotBlank(message = "Email is required")
+    @Email
     private String email;
 
-    @NotBlank(message = "number required")
-    @Pattern(regexp = "^[0-9]{10}$" , message= "Phone must be 10 digits")
+    @NotBlank(message = "Phone is required")
     private String phone;
 
-    @Column(nullable = false)
-    private String role;
+    private String role; // Not required, just informational
 
+    @NotBlank(message = "Gender is required")
     private String gender;
 
+    @NotBlank(message = "Blood group is required")
     private String bloodGroup;
-
-
 }

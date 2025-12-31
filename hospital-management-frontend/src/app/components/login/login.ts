@@ -25,12 +25,11 @@ export class Login {
   login(): void {
     this.authService.login(this.credentials).subscribe({
       next: (response) => {
-        console.log('Login successful', response);
-        localStorage.setItem('username', this.credentials.username); // Add this line
+        localStorage.setItem('username', response.username);
+        localStorage.setItem('role', response.role);
         this.router.navigate(['/dashboard']);
       },
       error: (error) => {
-        console.error('Login failed', error);
         this.errorMessage = 'Invalid username or password';
       }
     });

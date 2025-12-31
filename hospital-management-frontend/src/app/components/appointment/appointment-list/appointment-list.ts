@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Appointment } from '../../../interface/appointment';
 import { appointmentService } from '../../../services/appointment';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http'; // ADD THIS
 
 @Component({
   selector: 'app-appointment-list',
@@ -28,20 +29,36 @@ export class AppointmentList implements OnInit {
 
   constructor(
     private appointmentService: appointmentService,
+    private http: HttpClient, // ADD THIS
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.loadAppointments();
   }
-loadAppointments(): void {
-    this.appointmentService.getAllAppointments(this.currentPage, this.pageSize).subscribe({
-      next: (response) => {
-        this.appointments = response.content || response;
-        this.totalPages = response.totalPages || 0;
+
+  loadAppointments(): void {
+    this.http.get<any>('http://localhost:8091/api/appo').subscribe({
+      next: (response: any) => {
+        console.log('Appointment response:', response);
+        
+        // Handle different response formats
+        if (Array.isArray(response)) {
+          this.appointments = response;
+          this.totalPages = 1;
+        } else if (response && response.content) {
+          this.appointments = response.content;
+          this.totalPages = response.totalPages || 0;
+        } else {
+          this.appointments = [];
+          this.totalPages = 0;
+        }
+        
+        console.log('Appointments loaded:', this.appointments);
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error loading appointments', error);
+        alert('Failed to load appointments: ' + (error.error?.message || error.message));
       }
     });
   }
@@ -60,12 +77,13 @@ loadAppointments(): void {
         next: () => {
           this.loadAppointments();
         },
-        error: (error) => {
+        error: (error: any) => {
           console.error('Error deleting appointment', error);
         }
       });
     }
   }
+
   nextPage(): void {
     if (this.currentPage < this.totalPages - 1) {
       this.currentPage++;

@@ -9,13 +9,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/prescription")
+@RequestMapping("/api/prescriptions")
+@CrossOrigin(origins = "*")
 public class PrescriptionController {
 
     @Autowired
     private PrescriptionService prescriptionService;
-
-
 
     @GetMapping
     public List<Prescription> getAllPrescriptions() {

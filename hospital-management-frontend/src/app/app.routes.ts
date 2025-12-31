@@ -9,6 +9,7 @@ import { AppointmentForm } from './components/appointment/appointment-form/appoi
 import { AppointmentList } from './components/appointment/appointment-list/appointment-list';
 import { PatientForm } from './components/patient/patient-form/patient-form';
 import { PatientList } from './components/patient/patient-list/patient-list';
+import { PrescriptionList } from './components/prescription/prescription-list/prescription-list';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -67,6 +68,11 @@ export const routes: Routes = [
   { 
     path: 'prescriptions', 
     component: Dashboard, // Add PrescriptionList later
+    canActivate: [authGuard]
+  },
+  { 
+    path: 'prescriptions', 
+    component: PrescriptionList,
     canActivate: [authGuard]
   }
 ];

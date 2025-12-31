@@ -12,7 +12,7 @@ import { Auth } from '../../services/auth';
 })
 export class Dashboard implements OnInit {
   username: string = '';
-  userRole: string = 'USER';
+  userRole: string = '';
 
   constructor(
     private authService: Auth,
@@ -20,16 +20,30 @@ export class Dashboard implements OnInit {
   ) {}
   
   ngOnInit(): void {
-    // Get user info from localStorage
     this.username = localStorage.getItem('username') || 'User';
+    this.userRole = localStorage.getItem('role') || 'USER';
   }
 
   logout(): void {
     this.authService.logout();
+    localStorage.removeItem('username');
+    localStorage.removeItem('role');
     this.router.navigate(['/login']);
   }
 
   navigateTo(route: string): void {
     this.router.navigate([route]);
+  }
+  
+  canAccessDoctors(): boolean {
+    return this.userRole === 'DOCTOR' || this.userRole === 'ADMIN';
+  }
+  
+  canAccessPatients(): boolean {
+    return this.userRole === 'PATIENT' || this.userRole === 'DOCTOR' || this.userRole === 'ADMIN';
+  }
+  
+  canAccessAppointments(): boolean {
+    return this.userRole === 'ADMIN';
   }
 }

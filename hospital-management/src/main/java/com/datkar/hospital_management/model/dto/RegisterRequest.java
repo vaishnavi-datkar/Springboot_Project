@@ -7,7 +7,6 @@ import lombok.Data;
 
 @Data
 public class RegisterRequest {
-
     @NotBlank(message = "Username is required")
     @Size(min = 3, max = 50)
     private String username;
@@ -20,6 +19,7 @@ public class RegisterRequest {
     @Email
     private String email;
 
-    // Remove @NotBlank from role - it's set automatically
+    @NotBlank(message = "Role is required")
+
     private String role;
 }

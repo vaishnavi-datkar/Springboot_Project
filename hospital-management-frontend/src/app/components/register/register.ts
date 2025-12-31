@@ -1,21 +1,21 @@
-import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-register',
-  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './register.html',
-  styleUrls: ['./register.css']
+  styleUrl: './register.css',
 })
 export class Register {
   user = {
     username: '',
     password: '',
-    email: ''
+    email: '',
+    role: ''
   };
   errorMessage = '';
   successMessage = '';
@@ -26,6 +26,15 @@ export class Register {
   ) {}
 
   register(): void {
+    // Validate role selection
+    if (!this.user.role) {
+      this.errorMessage = 'Please select your role';
+      return;
+    }
+
+    this.errorMessage = '';
+    this.successMessage = '';
+
     this.authService.register(this.user).subscribe({
       next: (response) => {
         console.log('Registration successful', response);
@@ -36,7 +45,21 @@ export class Register {
       },
       error: (error) => {
         console.error('Registration failed', error);
-        this.errorMessage = error.error || 'Registration failed';
+        
+        // Properly extract error message
+        if (error.error) {
+          if (typeof error.error === 'string') {
+            this.errorMessage = error.error;
+          } else if (error.error.message) {
+            this.errorMessage = error.error.message;
+          } else {
+            this.errorMessage = 'Registration failed. Please try again.';
+          }
+        } else if (error.message) {
+          this.errorMessage = error.message;
+        } else {
+          this.errorMessage = 'Registration failed. Please check your network connection.';
+        }
       }
     });
   }
