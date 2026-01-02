@@ -2,7 +2,6 @@ package com.datkar.hospital_management.controller;
 
 import com.datkar.hospital_management.Repo.UserRepo;
 import com.datkar.hospital_management.model.User;
-import com.datkar.hospital_management.model.dto.AuthResponse;
 import com.datkar.hospital_management.model.dto.RegisterRequest;
 import com.datkar.hospital_management.model.dto.UserLogin;
 import com.datkar.hospital_management.config.JwtUtil;
@@ -11,13 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-//import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-//import org.springframework.security.core.Authentication;
-//import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -36,37 +35,6 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody UserLogin userLogin) {
-        try {
-            // Find user by username
-            User user = userRepository.findByUsername(userLogin.getUsername())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-
-            // Verify password
-            if (!passwordEncoder.matches(userLogin.getPassword(), user.getPassword())) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body("Invalid username or password");
-            }
-
-            // Generate JWT token
-            String token = jwtUtil.generateToken(user.getUsername());
-
-            // Create response
-            AuthResponse response = new AuthResponse();
-            response.setToken(token);
-            response.setUsername(user.getUsername());
-
-
-            return ResponseEntity.ok(response);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Login failed: " + e.getMessage());
-        }
-    }
-
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
 
@@ -79,13 +47,12 @@ public class AuthController {
                 return ResponseEntity.badRequest().body("Email already exists");
             }
 
-            // Validate role
             if (request.getRole() == null || request.getRole().isEmpty()) {
                 return ResponseEntity.badRequest().body("Role is required");
             }
 
             if (!request.getRole().matches("PATIENT|DOCTOR|ADMIN")) {
-                return ResponseEntity.badRequest().body("Invalid role. Must be PATIENT, DOCTOR, or ADMIN");
+                return ResponseEntity.badRequest().body("Invalid role");
             }
 
             User user = new User();
@@ -99,9 +66,34 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
 
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Registration failed: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@Valid @RequestBody UserLogin request) {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+            );
+
+            User user = userRepository.findByUsername(request.getUsername())
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+            String token = jwtUtil.generateToken(request.getUsername());
+
+            Map<String, String> response = new HashMap<>();
+            response.put("token", token);
+            response.put("role", user.getRole());
+            response.put("username", user.getUsername());
+            response.put("message", "Login successful");
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Invalid username or password");
         }
     }
 }

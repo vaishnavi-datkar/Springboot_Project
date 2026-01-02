@@ -30,11 +30,11 @@ export class AppointmentForm implements OnInit {
   appointmentId: number | null = null;
   errorMessage = '';
 
-  constructor(
+ constructor(
     private appointmentService: appointmentService,
     private doctorService: DoctorService,
     private patientService: PatientService,
-    private http: HttpClient, // ADD THIS
+    private http: HttpClient, 
     private router: Router,
     private route: ActivatedRoute
   ) {}

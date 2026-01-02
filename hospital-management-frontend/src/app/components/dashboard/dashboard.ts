@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { Auth } from '../../services/auth';
+import { AuthService } from '../../services/auth';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,19 +15,17 @@ export class Dashboard implements OnInit {
   userRole: string = '';
 
   constructor(
-    private authService: Auth,
+    private authService: AuthService,
     private router: Router
   ) {}
   
   ngOnInit(): void {
     this.username = localStorage.getItem('username') || 'User';
-    this.userRole = localStorage.getItem('role') || 'USER';
+    this.userRole = localStorage.getItem('role') || '';
   }
 
   logout(): void {
-    this.authService.logout();
-    localStorage.removeItem('username');
-    localStorage.removeItem('role');
+    localStorage.clear();
     this.router.navigate(['/login']);
   }
 

@@ -38,8 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
                 username = jwtUtil.extractUsername(token);
             } catch (ExpiredJwtException e) {
-                System.out.println("JWT token expired: " + e.getMessage());
-                // Continue without setting authentication - will be denied by security
+                System.out.println("JWT token expired");
             } catch (Exception e) {
                 System.out.println("JWT token invalid: " + e.getMessage());
             }
@@ -58,5 +57,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
-
 }

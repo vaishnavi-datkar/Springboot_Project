@@ -30,7 +30,7 @@ public class Patient {
     @NotBlank(message = "Phone is required")
     private String phone;
 
-    private String role; // Not required, just informational
+    private String role; // No validation - optional
 
     @NotBlank(message = "Gender is required")
     private String gender;
