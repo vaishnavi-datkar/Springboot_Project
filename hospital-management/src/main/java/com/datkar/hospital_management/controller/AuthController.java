@@ -20,7 +20,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*")
+
 public class AuthController {
 
     @Autowired
@@ -40,19 +40,19 @@ public class AuthController {
 
         try {
             if (userRepository.existsByUsername(request.getUsername())) {
-                return ResponseEntity.badRequest().body("Username already exists");
+                return ResponseEntity.badRequest().body(Map.of("message", "Username already exists"));
             }
 
             if (userRepository.existsByEmail(request.getEmail())) {
-                return ResponseEntity.badRequest().body("Email already exists");
+                return ResponseEntity.badRequest().body(Map.of("message", "Email already exists"));
             }
 
             if (request.getRole() == null || request.getRole().isEmpty()) {
-                return ResponseEntity.badRequest().body("Role is required");
+                return ResponseEntity.badRequest().body(Map.of("message", "Role is required"));
             }
 
             if (!request.getRole().matches("PATIENT|DOCTOR|ADMIN")) {
-                return ResponseEntity.badRequest().body("Invalid role");
+                return ResponseEntity.badRequest().body(Map.of("message", "Invalid role"));
             }
 
             User user = new User();
@@ -63,11 +63,12 @@ public class AuthController {
 
             userRepository.save(user);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(Map.of("message", "User registered successfully"));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Registration failed: " + e.getMessage());
+                    .body(Map.of("message", "Registration failed: " + e.getMessage()));
         }
     }
 

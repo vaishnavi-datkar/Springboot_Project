@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/patient")
-@CrossOrigin(origins = "*")
+
 public class PatientController {
     @Autowired
     private PatientService patientService;

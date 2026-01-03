@@ -26,30 +26,49 @@ export class Register {
   ) {}
 
   register(): void {
-    if (!this.user.role) {
-      this.errorMessage = 'Please select your role';
-      return;
-    }
+  if (!this.user.role) {
+    this.errorMessage = 'Please select your role';
+    return;
+  }
 
-    this.errorMessage = '';
-    this.successMessage = '';
+  this.errorMessage = '';
+  this.successMessage = '';
 
-    this.authService.register(this.user).subscribe({
-      next: (response) => {
-        this.successMessage = 'Registration successful! Redirecting to login...';
-        setTimeout(() => {
-          this.router.navigate(['/login']);
-        }, 2000);
-      },
-      error: (error) => {
+  this.authService.register(this.user).subscribe({
+    next: (response: any) => {
+      console.log('Registration response:', response);
+      
+      // Handle both string and object responses
+      if (typeof response === 'string') {
+        this.successMessage = response;
+      } else if (response.message) {
+        this.successMessage = response.message;
+      } else {
+        this.successMessage = 'Registration successful!';
+      }
+      
+      setTimeout(() => {
+        this.router.navigate(['/login']);
+      }, 2000);
+    },
+    error: (error) => {
+      console.error('Registration error:', error);
+      
+      // Handle different error formats
+      if (error.error) {
         if (typeof error.error === 'string') {
           this.errorMessage = error.error;
+        } else if (error.error.message) {
+          this.errorMessage = error.error.message;
         } else {
           this.errorMessage = 'Registration failed. Please try again.';
         }
+      } else {
+        this.errorMessage = 'Registration failed. Please check your connection.';
       }
-    });
-  }
+    }
+  });
+}
 
   goToLogin(): void {
     this.router.navigate(['/login']);

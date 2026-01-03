@@ -37,30 +37,24 @@ export class DoctorList implements OnInit {
   }
 
   loadDoctors(): void {
-  this.doctorService.getAllDoctors(this.currentPage, this.pageSize).subscribe({
-    next: (response) => {
-      console.log('Doctor response:', response);
-      
-      // Handle different response formats
-      if (Array.isArray(response)) {
-        this.doctors = response;
-        this.totalPages = 1;
-      } else if (response && response.content) {
-        this.doctors = response.content;
-        this.totalPages = response.totalPages || 0;
-      } else {
-        this.doctors = [];
-        this.totalPages = 0;
+    this.doctorService.getAllDoctors(this.currentPage, this.pageSize).subscribe({
+      next: (response) => {
+        if (Array.isArray(response)) {
+          this.doctors = response;
+          this.totalPages = 1;
+        } else if (response && response.content) {
+          this.doctors = response.content;
+          this.totalPages = response.totalPages || 0;
+        } else {
+          this.doctors = [];
+          this.totalPages = 0;
+        }
+      },
+      error: (error) => {
+        console.error('Error loading doctors', error);
       }
-      
-      console.log('Doctors loaded:', this.doctors);
-    },
-    error: (error) => {
-      console.error('Error loading doctors', error);
-      alert('Failed to load doctors: ' + (error.error?.message || error.message));
-    }
-  });
-}
+    });
+  }
 
   openAddModal(): void {
     this.isEditMode = false;
@@ -84,32 +78,28 @@ export class DoctorList implements OnInit {
   }
 
   saveDoctor(): void {
-  console.log('Saving doctor:', this.selectedDoctor);
-  
-  if (this.isEditMode) {
-    this.doctorService.updateDoctor(this.selectedDoctor.doctorId!, this.selectedDoctor).subscribe({
-      next: () => {
-        this.loadDoctors();
-        this.closeModal();
-      },
-      error: (error) => {
-        console.error('Error updating doctor', error);
-        alert('Failed to update doctor: ' + (error.error?.message || error.message));
-      }
-    });
-  } else {
-    this.doctorService.createDoctor(this.selectedDoctor).subscribe({
-      next: () => {
-        this.loadDoctors();
-        this.closeModal();
-      },
-      error: (error) => {
-        console.error('Error creating doctor', error);
-        alert('Failed to create doctor: ' + (error.error?.message || error.message));
-      }
-    });
+    if (this.isEditMode) {
+      this.doctorService.updateDoctor(this.selectedDoctor.doctorId!, this.selectedDoctor).subscribe({
+        next: () => {
+          this.loadDoctors();
+          this.closeModal();
+        },
+        error: (error: any) => {
+          alert('Failed to update doctor');
+        }
+      });
+    } else {
+      this.doctorService.createDoctor(this.selectedDoctor).subscribe({
+        next: () => {
+          this.loadDoctors();
+          this.closeModal();
+        },
+        error: (error: any) => {
+          alert('Failed to create doctor');
+        }
+      });
+    }
   }
-}
 
   deleteDoctor(id: number): void {
     if (confirm('Are you sure you want to delete this doctor?')) {
@@ -117,8 +107,8 @@ export class DoctorList implements OnInit {
         next: () => {
           this.loadDoctors();
         },
-        error: (error) => {
-          console.error('Error deleting doctor', error);
+        error: (error: any) => {
+          alert('Failed to delete doctor');
         }
       });
     }
