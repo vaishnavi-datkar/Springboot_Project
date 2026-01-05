@@ -4,6 +4,8 @@ import com.datkar.hospital_management.Repo.PatientRepo;
 import com.datkar.hospital_management.exceptions.ResourceNotFoundException;
 import com.datkar.hospital_management.model.Patient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,8 +19,8 @@ public class PatientService {
         return patientRepo.save(patient);
     }
 
-    public List<Patient> getAllPatient(){
-        return patientRepo.findAll();
+    public Page<Patient> findAll(Pageable pageable) {
+        return patientRepo.findAll(pageable);
     }
 
     public  Patient getPatientById(long patientId){  //to fetch a element by id

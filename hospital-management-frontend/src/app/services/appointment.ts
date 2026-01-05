@@ -7,7 +7,7 @@ import { Appointment } from '../interface/appointment';
   providedIn: 'root',
 })
 export class appointmentService {
-  private baseUrl = 'http://localhost:8091/api/appo';
+  private baseUrl = 'http://localhost:8091/api/appointments';
 
   constructor(private http: HttpClient) {}
 

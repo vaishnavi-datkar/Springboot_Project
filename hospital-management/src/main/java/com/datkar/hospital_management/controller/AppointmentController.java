@@ -1,6 +1,7 @@
 package com.datkar.hospital_management.controller;
 
 import com.datkar.hospital_management.model.Appointment;
+import com.datkar.hospital_management.model.dto.AppointmentDTO;
 import com.datkar.hospital_management.service.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -9,16 +10,17 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/appointments")
-
+@CrossOrigin(origins = "http://localhost:4200")
 public class AppointmentController {
 
     @Autowired
     private AppointmentService appointmentService;
 
     @GetMapping
-    public List<Appointment> getAllAppointments(){
-        return appointmentService.getAllAppointments();
+    public List<AppointmentDTO> getAllAppointments() {
+        return appointmentService.getAllAppointmentsDTO();
     }
+
 
     @GetMapping("/{id}")
     public Appointment getAppointment(@PathVariable long id){
@@ -28,8 +30,9 @@ public class AppointmentController {
 
     @PostMapping
     public Appointment addAppointment(@RequestBody Appointment appointment){
-        appointmentService.addAppointment(appointment);
-        return appointmentService.saveAppointment(appointment);    }
+        return appointmentService.saveAppointment(appointment);
+    }
+
 
     @PutMapping("/{id}")
     public Appointment updateAppointment(@RequestBody Appointment appointment){

@@ -38,7 +38,7 @@ export class AppointmentList implements OnInit {
   }
 
   loadAppointments(): void {
-    this.http.get<any>('http://localhost:8091/api/appo').subscribe({
+    this.http.get<any>('http://localhost:8091/api/appointments').subscribe({
       next: (response: any) => {
         console.log('Appointment response:', response);
         

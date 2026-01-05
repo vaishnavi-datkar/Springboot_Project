@@ -128,7 +128,7 @@ export class AppointmentForm implements OnInit {
     console.log('Saving appointment:', this.appointment);
     
     if (this.isEditMode && this.appointmentId) {
-      this.http.put(`http://localhost:8091/api/appo/${this.appointmentId}`, this.appointment).subscribe({
+      this.http.put(`http://localhost:8091/api/appointments/${this.appointmentId}`, this.appointment).subscribe({
         next: () => {
           this.router.navigate(['/appointments']);
         },
@@ -138,7 +138,7 @@ export class AppointmentForm implements OnInit {
         }
       });
     } else {
-      this.http.post('http://localhost:8091/api/appo', this.appointment).subscribe({
+      this.http.post('http://localhost:8091/api/appointments', this.appointment).subscribe({
         next: () => {
           this.router.navigate(['/appointments']);
         },

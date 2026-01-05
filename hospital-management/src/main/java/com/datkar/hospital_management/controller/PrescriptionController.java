@@ -10,7 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/prescriptions")
-
+@CrossOrigin(origins = "http://localhost:4200")
 public class PrescriptionController {
 
     @Autowired
