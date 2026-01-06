@@ -4,6 +4,7 @@ import com.datkar.hospital_management.model.Appointment;
 import com.datkar.hospital_management.model.dto.AppointmentDTO;
 import com.datkar.hospital_management.service.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,8 +18,11 @@ public class AppointmentController {
     private AppointmentService appointmentService;
 
     @GetMapping
-    public List<AppointmentDTO> getAllAppointments() {
-        return appointmentService.getAllAppointmentsDTO();
+    public Page<AppointmentDTO> getAllAppointments(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        return appointmentService.getAllAppointmentsDTO(page, size);
     }
 
 

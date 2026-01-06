@@ -18,18 +18,20 @@ public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private LocalDateTime appointmentDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "doctor_id")   // MATCHES DB COLUMN as previously it was showing null bcoz of db(Without @JoinColumn, Hibernate assumes a default column name)
     private Doctor doctor;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "patient_id")  // MATCHES DB COLUMN
     private Patient patient;
+
     @Enumerated(EnumType.STRING)
     private AppointmentStatus status;
+
     @OneToOne(cascade = CascadeType.ALL)
     private Prescription prescription;
-
-
 }
-

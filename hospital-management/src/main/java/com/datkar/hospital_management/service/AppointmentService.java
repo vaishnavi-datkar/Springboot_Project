@@ -6,6 +6,9 @@ import com.datkar.hospital_management.model.Appointment;
 import com.datkar.hospital_management.model.Patient;
 import com.datkar.hospital_management.model.dto.AppointmentDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,9 +25,39 @@ public class AppointmentService {
         return appintmentRepo.save(appointment);
     }
 
-    public List<Appointment> getAllAppointments() {
-        return appintmentRepo.findAll();
+    public Page<AppointmentDTO> getAllAppointmentsDTO(int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return appintmentRepo.findAll(pageable)
+                .map(this::convertToDTO);
     }
+
+    private AppointmentDTO convertToDTO(Appointment appointment) {
+
+        AppointmentDTO dto = new AppointmentDTO();
+
+        dto.setId(appointment.getId());
+        dto.setAppointmentDate(appointment.getAppointmentDate());
+        dto.setStatus(appointment.getStatus().name());
+
+        // doctor mapping
+        if (appointment.getDoctor() != null) {
+            dto.setDoctorId(appointment.getDoctor().getDoctorId().longValue());
+            dto.setDoctorName(appointment.getDoctor().getDoctorName());
+        }
+
+        // patient mapping
+        if (appointment.getPatient() != null) {
+            dto.setPatientId(appointment.getPatient().getPatientId());
+            dto.setPatientName(appointment.getPatient().getPatientName());
+        }
+
+        return dto;
+    }
+
+
+
 
     //method to return all the appointment
     public List<AppointmentDTO> getAllAppointmentsDTO(){
