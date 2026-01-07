@@ -19,10 +19,10 @@ export class Dashboard implements OnInit {
     private router: Router
   ) {}
   
-  ngOnInit(): void {
-    this.username = localStorage.getItem('username') || 'User';
-    this.userRole = localStorage.getItem('role') || '';
-  }
+ ngOnInit(): void {
+  this.username = localStorage.getItem('username') || 'User';
+  this.userRole = localStorage.getItem('userRole') || '';  // Change 'role' to 'userRole'
+}
 
   logout(): void {
     localStorage.clear();
@@ -33,15 +33,18 @@ export class Dashboard implements OnInit {
     this.router.navigate([route]);
   }
   
-  canAccessDoctors(): boolean {
-    return this.userRole === 'DOCTOR' || this.userRole === 'ADMIN';
-  }
-  
-  canAccessPatients(): boolean {
-    return this.userRole === 'PATIENT' || this.userRole === 'DOCTOR' || this.userRole === 'ADMIN';
-  }
+ canAccessDoctors(): boolean {
+  return this.userRole === 'ADMIN';  // Only ADMIN manages doctors
+}
+ canAccessPatients(): boolean {
+  return this.userRole === 'ADMIN';  // Only ADMIN manages all patients
+}
+
+canAccessPrescriptions(): boolean {
+  return true;  // Everyone can access (filtered by backend)
+}
   
   canAccessAppointments(): boolean {
-    return this.userRole === 'ADMIN';
-  }
+  return true;  // Everyone can access (filtered by backend)
+}
 }

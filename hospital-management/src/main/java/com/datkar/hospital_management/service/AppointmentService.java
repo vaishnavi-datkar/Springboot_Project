@@ -25,11 +25,22 @@ public class AppointmentService {
         return appintmentRepo.save(appointment);
     }
 
+    // For DOCTOR - get appointments where doctor.userId = userId
+    public Page<AppointmentDTO> getAppointmentsByDoctorUserId(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return appintmentRepo.findByDoctorUserId(userId, pageable).map(this::convertToDTO);
+    }
+
+    // For PATIENT - get appointments where patient.userId = userId
+    public Page<AppointmentDTO> getAppointmentsByPatientUserId(Long userId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return appintmentRepo.findByPatientUserId(userId, pageable).map(this::convertToDTO);
+    }
     public Page<AppointmentDTO> getAllAppointmentsDTO(int page, int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        return appintmentRepo.findAll(pageable)
+        return appintmentRepo.findAllWithPatientAndDoctor(pageable)
                 .map(this::convertToDTO);
     }
 

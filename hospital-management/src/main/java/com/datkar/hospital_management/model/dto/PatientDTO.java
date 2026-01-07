@@ -13,4 +13,6 @@ public class PatientDTO {
     private String role;
     private String gender;
     private String bloodGroup;
+    private Long userId;  // Links to User table
+
 }

@@ -11,4 +11,6 @@ public class DoctorDTO {
     private String specialization;
     private String role = "Doctor";
     private String email;
+    private Long userId;  // Links to User table
+
 }

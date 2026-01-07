@@ -20,6 +20,7 @@ public class Doctor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "doctor_id")
     private Integer doctorId;
 
     @NotBlank(message = "Doctor name is required")
@@ -36,4 +37,6 @@ public class Doctor {
     @Email(message = "Email must be valid")
     private String email;
 
+    @Column(name = "user_id")
+    private Long userId;  // Links to User table
 }

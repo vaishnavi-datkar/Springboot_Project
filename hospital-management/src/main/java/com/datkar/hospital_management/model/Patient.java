@@ -14,8 +14,11 @@ import lombok.NoArgsConstructor;
 public class Patient {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "patient_id")
     private Long patientId;
 
+
+    @Column(nullable = false)
     @NotBlank(message = "Patient name is required")
     private String patientName;
 
@@ -37,4 +40,7 @@ public class Patient {
 
     @NotBlank(message = "Blood group is required")
     private String bloodGroup;
+
+    @Column(name = "user_id")
+    private Long userId;  // Links to User table
 }

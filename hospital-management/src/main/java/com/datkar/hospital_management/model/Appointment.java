@@ -1,6 +1,7 @@
 package com.datkar.hospital_management.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,11 +23,13 @@ public class Appointment {
     private LocalDateTime appointmentDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "doctor_id")   // MATCHES DB COLUMN as previously it was showing null bcoz of db(Without @JoinColumn, Hibernate assumes a default column name)
+    @JoinColumn(name = "doctor_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Doctor doctor;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "patient_id")  // MATCHES DB COLUMN
+    @JoinColumn(name = "patient_id") // MATCHES DB COLUMN as previously it was showing null bcoz of db(Without @JoinColumn, Hibernate assumes a default column name)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Patient patient;
 
     @Enumerated(EnumType.STRING)

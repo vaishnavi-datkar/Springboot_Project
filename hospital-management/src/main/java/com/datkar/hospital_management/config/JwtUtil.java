@@ -65,5 +65,21 @@ public class JwtUtil {
             byte[] keyBytes = SECRET_KEY.getBytes();
             return Keys.hmacShaKeyFor(keyBytes);
         }
+    public String generateToken(String username, String role, Long userId) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("role", role);  // Store role in token
+        claims.put("userId", userId);  // Store userId in token
+        return createToken(claims, username);
+    }
+
+    // Add method to extract role
+    public String extractRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
+    }
+
+    // Add method to extract userId
+    public Long extractUserId(String token) {
+        return extractClaim(token, claims -> claims.get("userId", Long.class));
+    }
     }
 

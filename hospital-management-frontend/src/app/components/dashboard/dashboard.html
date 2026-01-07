@@ -29,9 +29,10 @@
         <p>Manage appointments</p>
       </div>
 
-      <div class="card" (click)="navigateTo('/prescriptions')" *ngIf="canAccessPatients()">
-        <h3>Prescriptions</h3>
-        <p>View prescriptions</p>
+    <div class="card" (click)="navigateTo('/prescriptions')" *ngIf="canAccessPrescriptions()">
+  <h3>Prescriptions</h3>
+  <p>View prescriptions</p>
+
       </div>
     </div>
   </div>
