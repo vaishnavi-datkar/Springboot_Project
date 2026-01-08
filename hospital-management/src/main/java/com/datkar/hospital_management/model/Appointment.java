@@ -37,4 +37,7 @@ public class Appointment {
 
     @OneToOne(cascade = CascadeType.ALL)
     private Prescription prescription;
+
+    @Column(name = "created_by")
+    private Long createdBy;  // userId who created this appointment
 }

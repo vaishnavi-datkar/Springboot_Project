@@ -32,9 +32,9 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/api/doctors/**").hasAnyRole("DOCTOR", "ADMIN")
+                        .requestMatchers("/api/doctors/**").hasAnyRole("DOCTOR", "ADMIN", "PATIENT")  // ADD PATIENT
                         .requestMatchers("/api/patients/**").hasAnyRole("PATIENT", "DOCTOR", "ADMIN")
-                        .requestMatchers("/api/appo/**").hasRole("ADMIN")
+                        .requestMatchers("/api/appointments/**").hasAnyRole("PATIENT", "DOCTOR", "ADMIN")  // ADD
                         .requestMatchers("/api/prescriptions/**").hasAnyRole("PATIENT", "DOCTOR", "ADMIN")
                         .anyRequest().authenticated()
                 )

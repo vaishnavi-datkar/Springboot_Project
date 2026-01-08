@@ -21,4 +21,9 @@ public class RegisterRequest {
 
     @NotBlank(message = "Role is required")
     private String role;
+
+    @NotBlank
+    private String name;  // actual person's name
+
+    private String specialization;  // For DOCTOR role only if selected
 }

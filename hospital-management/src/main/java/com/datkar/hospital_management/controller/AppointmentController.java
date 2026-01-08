@@ -1,10 +1,10 @@
 package com.datkar.hospital_management.controller;
 
+import com.datkar.hospital_management.Repo.DoctorRepo;
+import com.datkar.hospital_management.Repo.PatientRepo;
+import com.datkar.hospital_management.Repo.UserRepo;
 import com.datkar.hospital_management.config.JwtUtil;
-import com.datkar.hospital_management.model.Appointment;
-import com.datkar.hospital_management.model.AppointmentStatus;
-import com.datkar.hospital_management.model.Doctor;
-import com.datkar.hospital_management.model.Patient;
+import com.datkar.hospital_management.model.*;
 import com.datkar.hospital_management.model.dto.AppointmentDTO;
 import com.datkar.hospital_management.service.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +21,15 @@ public class AppointmentController {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private UserRepo userRepo;
+
+    @Autowired
+    private PatientRepo patientRepo;
+
+    @Autowired
+    private DoctorRepo doctorRepo;
 
     // Get all appointments with pagination - returns patient and doctor names
     @GetMapping
@@ -45,7 +54,8 @@ public class AppointmentController {
 
         // PATIENT sees only their appointments
         if ("PATIENT".equals(role)) {
-            return appointmentService.getAppointmentsByPatientUserId(userId, page, size);
+            User user = userRepo.findById(userId).orElseThrow();  // ADD THIS LINE
+            return appointmentService.getAppointmentsByPatientUserId(userId, user.getName(), page, size);
         }
 
         throw new RuntimeException("Invalid role");
@@ -64,12 +74,24 @@ public class AppointmentController {
         appointment.setAppointmentDate(appointmentDTO.getAppointmentDate());
         appointment.setStatus(AppointmentStatus.valueOf(appointmentDTO.getStatus()));
 
-        // Frontend sends patientId as number, we need to create Patient object with that ID
-        Patient patient = new Patient();
-        patient.setPatientId(appointmentDTO.getPatientId());
+        // Create or update patient
+        Patient patient;
+        if (appointmentDTO.getPatientId() != null) {
+            patient = patientRepo.findById(appointmentDTO.getPatientId()).orElseThrow();
+        } else {
+            // Create new patient from form data
+            patient = new Patient();
+            patient.setPatientName(appointmentDTO.getPatientName());
+            patient.setPhone(appointmentDTO.getPatientPhone());
+            patient.setAge(appointmentDTO.getPatientAge());
+            patient.setBloodGroup(appointmentDTO.getPatientBloodGroup());
+            patient.setEmail("");  // Not collected in form
+            patient.setGender("");  // Not collected in form
+            patient = patientRepo.save(patient);
+        }
         appointment.setPatient(patient);
 
-        // Same for doctor - create Doctor object with the ID from frontend
+        // Set doctor
         Doctor doctor = new Doctor();
         doctor.setDoctorId(appointmentDTO.getDoctorId().intValue());
         appointment.setDoctor(doctor);
@@ -77,18 +99,22 @@ public class AppointmentController {
         return appointmentService.saveAppointment(appointment);
     }
 
-    // Update existing appointment - same conversion logic as create
     @PutMapping("/{id}")
-    public Appointment updateAppointment(@PathVariable long id, @RequestBody AppointmentDTO appointmentDTO){
+    public Appointment updateAppointment(
+            @PathVariable long id,
+            @RequestBody AppointmentDTO appointmentDTO,
+            @RequestHeader("Authorization") String token) {
+
+        String jwt = token.substring(7);
+        Long userId = jwtUtil.extractUserId(jwt);
+
         Appointment appointment = appointmentService.getAppointmentById(id);
         appointment.setAppointmentDate(appointmentDTO.getAppointmentDate());
         appointment.setStatus(AppointmentStatus.valueOf(appointmentDTO.getStatus()));
 
-        // Update patient link
         Patient patient = new Patient();
         patient.setPatientId(appointmentDTO.getPatientId());
         appointment.setPatient(patient);
-
         // Update doctor link
         Doctor doctor = new Doctor();
         doctor.setDoctorId(appointmentDTO.getDoctorId().intValue());
@@ -97,7 +123,6 @@ public class AppointmentController {
         return appointmentService.saveAppointment(appointment);
     }
 
-    // Delete appointment
     @DeleteMapping("/{id}")
     public String deleteAppointment(@PathVariable long id){
         appointmentService.deleteAppointment(id);

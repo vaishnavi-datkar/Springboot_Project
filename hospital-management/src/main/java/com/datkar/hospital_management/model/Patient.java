@@ -22,23 +22,23 @@ public class Patient {
     @NotBlank(message = "Patient name is required")
     private String patientName;
 
-    @NotNull(message = "Age is required")
-    @Min(1)
+   // @NotNull(message = "Age is required")
+   // @Min(1)
     private Integer age;
 
     @NotBlank(message = "Email is required")
     @Email
     private String email;
 
-    @NotBlank(message = "Phone is required")
+    //@NotBlank(message = "Phone is required")
     private String phone;
 
     private String role; // No validation - optional
 
-    @NotBlank(message = "Gender is required")
+   // @NotBlank(message = "Gender is required")
     private String gender;
 
-    @NotBlank(message = "Blood group is required")
+   // @NotBlank(message = "Blood group is required")
     private String bloodGroup;
 
     @Column(name = "user_id")

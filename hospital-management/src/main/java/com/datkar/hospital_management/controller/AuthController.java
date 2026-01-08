@@ -1,6 +1,11 @@
 package com.datkar.hospital_management.controller;
 
+import com.datkar.hospital_management.Repo.DoctorRepo;
+import com.datkar.hospital_management.Repo.PatientRepo;
 import com.datkar.hospital_management.Repo.UserRepo;
+import com.datkar.hospital_management.model.Doctor;
+import com.datkar.hospital_management.model.Patient;
+
 import com.datkar.hospital_management.model.User;
 import com.datkar.hospital_management.model.dto.RegisterRequest;
 import com.datkar.hospital_management.model.dto.UserLogin;
@@ -35,6 +40,12 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private PatientRepo patientRepo;  // ADD
+
+    @Autowired
+    private DoctorRepo doctorRepo;
+
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
 
@@ -55,13 +66,42 @@ public class AuthController {
                 return ResponseEntity.badRequest().body(Map.of("message", "Invalid role"));
             }
 
+            // Validate specialization for DOCTOR
+            if ("DOCTOR".equals(request.getRole()) &&
+                    (request.getSpecialization() == null || request.getSpecialization().isEmpty())) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Specialization required for doctors"));
+            }
+
+            // Create User
             User user = new User();
             user.setUsername(request.getUsername());
             user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setEmail(request.getEmail());
             user.setRole(request.getRole());
+            user.setName(request.getName());
 
-            userRepository.save(user);
+            User savedUser = userRepository.save(user);
+
+            // Auto-create Patient or Doctor entry
+            if ("PATIENT".equals(request.getRole())) {
+                Patient patient = new Patient();
+                patient.setPatientName(request.getName());
+                patient.setEmail(request.getEmail());
+                patient.setUserId(savedUser.getId());
+                // Default values for required fields
+                patient.setAge(0);
+                patient.setPhone("");
+                patient.setGender("");
+                patient.setBloodGroup("");
+                patientRepo.save(patient);
+            } else if ("DOCTOR".equals(request.getRole())) {
+                Doctor doctor = new Doctor();
+                doctor.setDoctorName(request.getName());
+                doctor.setEmail(request.getEmail());
+                doctor.setSpecialization(request.getSpecialization());
+                doctor.setUserId(savedUser.getId());
+                doctorRepo.save(doctor);
+            }
 
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(Map.of("message", "User registered successfully"));
@@ -82,13 +122,14 @@ public class AuthController {
             User user = userRepository.findByUsername(request.getUsername())
                     .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-            String token = jwtUtil.generateToken(request.getUsername(), user.getRole(), user.getId());
+            String token = jwtUtil.generateToken(user.getUsername(), user.getRole(), user.getId());
 
             Map<String, Object> response = new HashMap<>();
             response.put("token", token);
             response.put("role", user.getRole());
             response.put("username", user.getUsername());
-            response.put("userId", user.getId());  // Add userId
+            response.put("userId", user.getId());
+            response.put("name", user.getName());  // ADD
             response.put("message", "Login successful");
 
             return ResponseEntity.ok(response);

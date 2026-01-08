@@ -33,6 +33,8 @@ public class User {
     @Column(nullable = false)
     private String role; // for ADMIN,DOCTOR,PATIENT
 
+    private String name;  // ADD THIS - actual person's name like original name instead of username
+
 
 
 }

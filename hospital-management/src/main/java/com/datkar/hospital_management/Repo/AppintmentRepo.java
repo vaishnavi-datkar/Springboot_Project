@@ -28,6 +28,9 @@ public interface AppintmentRepo extends JpaRepository<Appointment, Long> {
     @Query("SELECT a FROM Appointment a LEFT JOIN FETCH a.patient LEFT JOIN FETCH a.doctor WHERE a.doctor.userId = :userId")
     Page<Appointment> findByDoctorUserId(@Param("userId") Long userId, Pageable pageable);
 
-    @Query("SELECT a FROM Appointment a LEFT JOIN FETCH a.patient LEFT JOIN FETCH a.doctor WHERE a.patient.userId = :userId")
-    Page<Appointment> findByPatientUserId(@Param("userId") Long userId, Pageable pageable);
+    // For PATIENT - appointments created by user OR patient name matches user's name
+    @Query("SELECT a FROM Appointment a LEFT JOIN FETCH a.patient LEFT JOIN FETCH a.doctor " +
+            "WHERE a.createdBy = :userId OR a.patient.patientName = :patientName")
+    Page<Appointment> findByPatientUserIdOrName(@Param("userId") Long userId, @Param("patientName") String patientName, Pageable pageable);
 }
+

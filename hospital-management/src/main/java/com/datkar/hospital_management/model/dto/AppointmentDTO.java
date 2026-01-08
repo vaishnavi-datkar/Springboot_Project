@@ -15,9 +15,13 @@ public class AppointmentDTO {
 
     private Long patientId;
     private String patientName;
+    private String patientPhone;  //
+    private Integer patientAge;   // as it is required for patient details
+    private String patientBloodGroup;
     private Long doctorId;
     private String doctorName;
+    private String doctorSpecialization;
     private String status;
     private Long prescriptionId;
-
+    private Long createdBy;
 }
