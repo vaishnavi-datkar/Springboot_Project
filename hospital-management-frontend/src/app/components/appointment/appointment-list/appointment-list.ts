@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Appointment } from '../../../interface/appointment';
 import { appointmentService } from '../../../services/appointment';
+import { AuthService } from '../../../services/auth';
 
 @Component({ selector: 'app-appointment-list',
 imports: [CommonModule, FormsModule], 
@@ -19,6 +20,7 @@ export class AppointmentList implements OnInit {
 
   constructor(
     private appointmentService: appointmentService,
+     private authService: AuthService,  
     private router: Router
   ) {}
 
@@ -70,6 +72,18 @@ export class AppointmentList implements OnInit {
       });
     }
   }
+
+  openPrescription(appointment: Appointment): void {
+  const role = this.authService.getUserRole();
+  
+  if (role === 'DOCTOR') {
+    // Doctor opens form to write prescription
+    this.router.navigate(['/prescriptions/form', appointment.id]);
+  } else if (role === 'PATIENT') {
+    // Patient views their prescription
+    this.router.navigate(['/prescriptions/view', appointment.id]);
+  }
+}
   goToDashboard(): void {
      this.router.navigate(['/dashboard']);
      }

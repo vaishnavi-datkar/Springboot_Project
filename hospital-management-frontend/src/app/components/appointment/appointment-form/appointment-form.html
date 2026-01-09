@@ -90,16 +90,15 @@
             required>
         </div>
 
-        <div class="form-group">
-          <label>Status *</label>
-          <select [(ngModel)]="appointment.status" name="status" required>
-            <option value="SCHEDULED">Scheduled</option>
-            <option value="CONFIRMED">Confirmed</option>
-            <option value="COMPLETED">Completed</option>
-            <option value="CANCELLED">Cancelled</option>
-          </select>
-        </div>
-
+       <div class="form-group">
+  <label>Status *</label>
+  <select [(ngModel)]="appointment.status" name="status" required>
+    <option value="SCHEDULED">Scheduled</option>
+    <option value="CONFIRMED">Confirmed</option>
+    <option value="COMPLETED">Completed</option>
+    <option value="CANCELLED">Cancelled</option>
+  </select>
+</div>
         <div class="form-actions">
           <button type="button" class="btn-cancel" (click)="cancel()">Cancel</button>
           <button type="submit" class="btn-save">{{ isEditMode ? 'Update' : 'Schedule' }}</button>

@@ -22,7 +22,7 @@ export class AppointmentForm implements OnInit {
     appointmentDate: '',
     patientId: 0,
     doctorId: 0,
-    status: 'SCHEDULED'
+    status: 'CONFIRMED' 
   };
   
   // Patient details for PATIENT role

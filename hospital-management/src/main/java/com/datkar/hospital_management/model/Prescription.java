@@ -13,6 +13,7 @@ public class Prescription {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    private Long appointmentId;
     private String pName;
     private String dName;
     private String medicine;

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PrescriptionService {
@@ -14,22 +15,24 @@ public class PrescriptionService {
     private PrescriptionRepo prescriptionRepo;
 
     public Prescription savePrescription(Prescription prescription) {
-
         return prescriptionRepo.save(prescription);
     }
 
     public List<Prescription> getAllPrescriptions() {
-
         return prescriptionRepo.findAll();
     }
 
     public Prescription getPrescriptionById(int id) {
+        return prescriptionRepo.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Prescription not found with id: " + id));
+    }
 
-        return prescriptionRepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("Prescription not found with id: " + id));
+    // ADD THIS METHOD
+    public Optional<Prescription> getPrescriptionByAppointmentId(Long appointmentId) {
+        return prescriptionRepo.findByAppointmentId(appointmentId);
     }
 
     public void deletePrescription(int id) {
-
         prescriptionRepo.deleteById(id);
     }
 }

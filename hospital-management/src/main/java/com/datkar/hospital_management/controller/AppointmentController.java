@@ -69,36 +69,40 @@ public class AppointmentController {
 
     // Create new appointment - converts patientId/doctorId from frontend to actual Patient/Doctor objects
     @PostMapping
-    public Appointment addAppointment(@RequestBody AppointmentDTO appointmentDTO){
+    public Appointment addAppointment(
+            @RequestBody AppointmentDTO appointmentDTO,
+            @RequestHeader("Authorization") String token) {
+
+        String jwt = token.substring(7);
+        Long userId = jwtUtil.extractUserId(jwt);
+
         Appointment appointment = new Appointment();
         appointment.setAppointmentDate(appointmentDTO.getAppointmentDate());
         appointment.setStatus(AppointmentStatus.valueOf(appointmentDTO.getStatus()));
+        appointment.setCreatedBy(userId);  // ADD THIS LINE
 
         // Create or update patient
         Patient patient;
         if (appointmentDTO.getPatientId() != null) {
             patient = patientRepo.findById(appointmentDTO.getPatientId()).orElseThrow();
         } else {
-            // Create new patient from form data
             patient = new Patient();
             patient.setPatientName(appointmentDTO.getPatientName());
             patient.setPhone(appointmentDTO.getPatientPhone());
             patient.setAge(appointmentDTO.getPatientAge());
             patient.setBloodGroup(appointmentDTO.getPatientBloodGroup());
-            patient.setEmail("");  // Not collected in form
-            patient.setGender("");  // Not collected in form
+            patient.setEmail("");
+            patient.setGender("");
             patient = patientRepo.save(patient);
         }
         appointment.setPatient(patient);
 
-        // Set doctor
         Doctor doctor = new Doctor();
         doctor.setDoctorId(appointmentDTO.getDoctorId().intValue());
         appointment.setDoctor(doctor);
 
         return appointmentService.saveAppointment(appointment);
     }
-
     @PutMapping("/{id}")
     public Appointment updateAppointment(
             @PathVariable long id,

@@ -33,9 +33,10 @@
               </span>
             </td>
             <td>
-              <button class="btn-edit" (click)="openEditModal(appointment)">Edit</button>
-              <button class="btn-delete" (click)="deleteAppointment(appointment.id!)">Delete</button>
-            </td>
+  <button class="btn-edit" (click)="openEditModal(appointment)">Edit</button>
+  <button class="btn-delete" (click)="deleteAppointment(appointment.id!)">Delete</button>
+  <button class="btn-prescription" (click)="openPrescription(appointment)">Prescription</button>
+</td>
           </tr>
         </tbody>
       </table>
