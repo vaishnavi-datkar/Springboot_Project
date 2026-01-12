@@ -1,1 +1,37 @@
-<p>prescriptionform works!</p>
+<div class="prescription-form-container">
+  <h2>{{ isViewMode ? 'View Prescription' : 'Prescription Form' }}</h2>
+  
+  <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
+  
+  <form>
+    <div class="form-group">
+      <label>Patient Name:</label>
+      <input type="text" [(ngModel)]="prescription.pName" name="pName" [disabled]="true" />
+    </div>
+    
+    <div class="form-group">
+      <label>Doctor Name:</label>
+      <input type="text" [(ngModel)]="prescription.dName" name="dName" [disabled]="true" />
+    </div>
+    
+    <div class="form-group">
+      <label>Medicine: *</label>
+      <textarea [(ngModel)]="prescription.medicine" name="medicine" [disabled]="isViewMode" required></textarea>
+    </div>
+    
+    <div class="form-group">
+      <label>Diagnosis: *</label>
+      <textarea [(ngModel)]="prescription.diagnosis" name="diagnosis" [disabled]="isViewMode" required></textarea>
+    </div>
+    
+    <div class="form-group">
+      <label>Notes:</label>
+      <textarea [(ngModel)]="prescription.notes" name="notes" [disabled]="isViewMode"></textarea>
+    </div>
+    
+    <div class="form-actions">
+      <button type="button" *ngIf="!isViewMode" (click)="savePrescription()" class="btn-save">Save Prescription</button>
+      <button type="button" (click)="cancel()" class="btn-cancel">Back</button>
+    </div>
+  </form>
+</div>

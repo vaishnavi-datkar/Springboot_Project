@@ -73,19 +73,22 @@ export class AppointmentList implements OnInit {
     }
   }
 
-  openPrescription(appointment: Appointment): void {
-  const role = this.authService.getUserRole();
-  
-  if (role === 'DOCTOR') {
-    // Doctor opens form to write prescription
-    this.router.navigate(['/prescriptions/form', appointment.id]);
-  } else if (role === 'PATIENT') {
-    // Patient views their prescription
-    this.router.navigate(['/prescriptions/view', appointment.id]);
+   openPrescription(appointment: Appointment): void {
+    const role = this.authService.getUserRole();
+    
+    if (role === 'DOCTOR') {
+      // Doctor opens form to write prescription
+      this.router.navigate(['/prescriptions/form', appointment.id]);
+    } else if (role === 'PATIENT') {
+      // Patient views their prescription
+      this.router.navigate(['/prescriptions/view', appointment.id]);
+    } else {
+      // ADMIN can also view
+      this.router.navigate(['/prescriptions/view', appointment.id]);
+    }
+  }
+
+  goToDashboard(): void {
+    this.router.navigate(['/dashboard']);
   }
 }
-  goToDashboard(): void {
-     this.router.navigate(['/dashboard']);
-     }
-     }
-

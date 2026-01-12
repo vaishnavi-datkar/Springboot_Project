@@ -10,6 +10,7 @@ import { AppointmentList } from './components/appointment/appointment-list/appoi
 import { PatientForm } from './components/patient/patient-form/patient-form';
 import { PatientList } from './components/patient/patient-list/patient-list';
 import { PrescriptionList } from './components/prescription/prescription-list/prescription-list';
+import { Prescriptionform } from './components/prescription/prescriptionform/prescriptionform';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -74,5 +75,10 @@ export const routes: Routes = [
     path: 'prescriptions', 
     component: PrescriptionList,
     canActivate: [authGuard]
-  }
+  },
+   { 
+    path: 'prescriptions/form/:id', 
+    component: Prescriptionform 
+  },
+  { path: 'prescriptions/view/:id', component: Prescriptionform } 
 ];

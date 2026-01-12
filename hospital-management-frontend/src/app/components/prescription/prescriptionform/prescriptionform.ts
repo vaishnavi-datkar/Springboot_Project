@@ -1,12 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth';
 import { PrescriptionService } from '../../../services/prescriptionservice';
 import { appointmentService } from '../../../services/appointment';
 
 @Component({
   selector: 'app-prescriptionform',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './prescriptionform.html',
   styleUrl: './prescriptionform.css',
 })
@@ -31,21 +34,24 @@ export class Prescriptionform implements OnInit {
     private appointmentService: appointmentService,
     private authService: AuthService
   ) {}
- ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      this.appointmentId = +params['id'];
-      this.prescription.appointmentId = this.appointmentId;
-      
-      const role = this.authService.getUserRole();
-      this.isViewMode = role === 'PATIENT';
-      
-      // Load appointment details
-      this.loadAppointmentDetails();
-      
-      // Check if prescription already exists
-      this.loadExistingPrescription();
-    });
-  }
+
+  ngOnInit(): void {
+  this.route.params.subscribe(params => {
+    this.appointmentId = +params['id'];
+    this.prescription.appointmentId = this.appointmentId;
+    
+    // Check URL path to determine if view-only mode
+    const currentUrl = this.router.url;
+    this.isViewMode = currentUrl.includes('/view/');  // CHANGE THIS LINE
+    
+    console.log('Current URL:', currentUrl);  // ADD DEBUG
+    console.log('Is View Mode:', this.isViewMode);  // ADD DEBUG
+    console.log('Appointment ID:', this.appointmentId);
+    
+    this.loadAppointmentDetails();
+    this.loadExistingPrescription();
+  });
+}
 
   loadAppointmentDetails(): void {
     this.appointmentService.getAppointmentById(this.appointmentId).subscribe({
@@ -53,7 +59,7 @@ export class Prescriptionform implements OnInit {
         this.prescription.pName = appointment.patientName;
         this.prescription.dName = appointment.doctorName;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error loading appointment', err);
       }
     });
@@ -66,7 +72,7 @@ export class Prescriptionform implements OnInit {
           this.prescription = data;
         }
       },
-      error: (err) => {
+      error: (err: any) => {
         console.log('No existing prescription');
       }
     });
@@ -77,32 +83,31 @@ export class Prescriptionform implements OnInit {
       this.errorMessage = 'Please fill all required fields';
       return;
     }
+
     if (this.prescription.id) {
-      // Update existing
       this.prescriptionService.updatePrescription(this.prescription.id, this.prescription).subscribe({
         next: () => {
           alert('Prescription updated successfully');
           this.router.navigate(['/appointments']);
         },
-        error: (err) => {
+        error: (err: any) => {
           this.errorMessage = 'Failed to update prescription';
         }
       });
     } else {
-      // Create new
       this.prescriptionService.createPrescription(this.prescription).subscribe({
         next: () => {
           alert('Prescription created successfully');
           this.router.navigate(['/appointments']);
         },
-        error: (err) => {
+        error: (err: any) => {
           this.errorMessage = 'Failed to create prescription';
         }
       });
     }
   }
+
   cancel(): void {
     this.router.navigate(['/appointments']);
   }
-
 }
